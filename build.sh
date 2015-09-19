@@ -16,32 +16,34 @@ SCRIPTS_PATH="$BASE_PATH/scripts"
 SOURCES_PATH="$BASE_PATH/sources"
 VM_PATH="$BASE_PATH/oneclick/Contents"
 BUILD_CACHE="$BASE_PATH/cache"
+PHARO_VM="$VM_PATH/Linux/pharo"
+PHARO_PARAM="-vm-display-null"
 
 # vm configuration
-case "$(uname -s)" in
-	"Linux")
-		if [ -f "$(which cog)" ] ; then
-			PHARO_VM="$(which cog)"
-		elif [ -f "$(which squeak)" ] ; then
-			PHARO_VM="$(which squeak)"
-		else
-			PHARO_VM="$VM_PATH/Linux/squeak"
-		fi
-		PHARO_PARAM="-nodisplay -nosound"
-		;;
-	"Darwin")
-		PHARO_VM="$VM_PATH/MacOS/Squeak VM Opt"
-		PHARO_PARAM="-headless"
-		;;
-	"Cygwin")
-		PHARO_VM="$VM_PATH/Windows/Squeak.exe"
-		PHARO_PARAM="-headless"
-		;;
-	*)
-		echo "$(basename $0): unknown platform $(uname -s)"
-		exit 1
-		;;
-esac
+#case "$(uname -s)" in
+#	"Linux")
+#		if [ -f "$(which cog)" ] ; then
+#			PHARO_VM="$(which cog)"
+#		elif [ -f "$(which squeak)" ] ; then
+#			PHARO_VM="$(which squeak)"
+#		else
+#			PHARO_VM="$VM_PATH/Linux/pharo"
+#		fi
+#		PHARO_PARAM="-nodisplay -nosound"
+#		;;
+#	"Darwin")
+#		PHARO_VM="$VM_PATH/MacOS/Squeak VM Opt"
+#		PHARO_PARAM="-headless"
+#		;;
+#	"Cygwin")
+#		PHARO_VM="$VM_PATH/Windows/Squeak.exe"
+#		PHARO_PARAM="-headless"
+#		;;
+#	*)
+#		echo "$(basename $0): unknown platform $(uname -s)"
+#		exit 1
+#		;;
+#esac
 
 # build configuration
 SCRIPTS=("$SCRIPTS_PATH/before.st")
@@ -145,29 +147,41 @@ for FILE in "${SCRIPTS[@]}" ; do
 done
 
 # build image in the background
-exec "$PHARO_VM" $PHARO_PARAM "$OUTPUT_IMAGE" "$OUTPUT_SCRIPT" &
+#exec "$PHARO_VM" $PHARO_PARAM "$OUTPUT_IMAGE" "$OUTPUT_SCRIPT" &
+"$PHARO_VM" $PHARO_PARAM "$OUTPUT_IMAGE" "$OUTPUT_SCRIPT" -headless
 
 # wait for the process to terminate, or a debug log
-if [ $! ] ; then
-	while kill -0 $! 2> /dev/null ; do
-		if [ -f "$OUTPUT_DUMP" ] || [ -f "$OUTPUT_DEBUG" ] ; then
-			sleep 5
-			kill -s SIGKILL $! 2> /dev/null
-			if [ -f "$OUTPUT_DUMP" ] ; then
-				echo "$(basename $0): VM aborted ($PHARO_VM)"
-				cat "$OUTPUT_DUMP" | tr '\r' '\n' | sed 's/^/  /'
-			elif [ -f "$OUTPUT_DEBUG" ] ; then
-				echo "$(basename $0): Execution aborted ($PHARO_VM)"
-				cat "$OUTPUT_DEBUG" | tr '\r' '\n' | sed 's/^/  /'
-			fi
-			exit 1
-		fi
-		sleep 1
-	done
-else
-	echo "$(basename $0): unable to start VM ($PHARO_VM)"
-	exit 1
+#if [ $! ] ; then
+#	while kill -0 $! 2> /dev/null ; do
+#		if [ -f "$OUTPUT_DUMP" ] || [ -f "$OUTPUT_DEBUG" ] ; then
+#			sleep 5
+#			kill -s SIGKILL $! 2> /dev/null
+#			if [ -f "$OUTPUT_DUMP" ] ; then
+#				echo "$(basename $0): VM aborted ($PHARO_VM)"
+#				cat "$OUTPUT_DUMP" | tr '\r' '\n' | sed 's/^/  /'
+#			elif [ -f "$OUTPUT_DEBUG" ] ; then
+#				echo "$(basename $0): Execution aborted ($PHARO_VM)"
+#				cat "$OUTPUT_DEBUG" | tr '\r' '\n' | sed 's/^/  /'
+#			fi
+#			exit 1
+#		fi
+#		sleep 1
+#	done
+#else
+#	echo "$(basename $0): unable to start VM ($PHARO_VM)"
+#	exit 1
+#fi
+
+if [ -f "$OUTPUT_DEBUG" ] ; then
+
+        X=`grep THERE_BE_DRAGONS_HERE "$OUTPUT_DEBUG" | wc -l`
+        if [ $X != "0" ] ; then
+                echo "$(basename $0): error loading code ($PHARO_VM)"
+                cat "$OUTPUT_DEBUG" | tr '\r' '\n' | sed 's/^/  /'
+                exit 1
+        fi
 fi
+
 
 # remove cache link
 rm -rf "$OUTPUT_CACHE" "$OUTPUT_ZIP"

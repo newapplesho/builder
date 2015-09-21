@@ -53,7 +53,6 @@ Configure the new job
         build.sh -i PharoCore-1.0-10505rc1 -s omnibrowser -o omnibrowser
         build.sh -i omnibrowser -s buildtools -s omnibrowser-tests -o omnibrowser-tests
 
-        build-oneclick.sh -i omnibrowser -o Pharo-OneClick -n Pharo -t "Pharo Development" -v 1.1 -c Pharo
 - in the "Post-build Actions" section, enable "Publish JUnit test result report"
 - enter "**/*-Test.xml" into the text input labelled "Test report XMLs" that appears.
 - in the "Post-build Actions" section, enable "Publish Checkstyle analysis results" (requires the Checkstyle plugin to be installed)

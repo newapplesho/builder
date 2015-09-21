@@ -3,7 +3,7 @@ PART A - Prepare image and adjust build scripts
 
 Install the support scripts, either by downloading the latest code directly from GitHub http://github.com/renggli/builder/zipball/master or by cloning the Git repository:
 
-	git clone git://github.com/renggli/builder.git
+	git clone git://github.com/newapplesho/builder.git
 	
 You should get a directory structure with several empty directories, this readme file and several shell scripts.
 
@@ -57,13 +57,7 @@ Configure the new job
 - in the "Post-build Actions" section, enable "Publish JUnit test result report"
 - enter "**/*-Test.xml" into the text input labelled "Test report XMLs" that appears.
 - in the "Post-build Actions" section, enable "Publish Checkstyle analysis results" (requires the Checkstyle plugin to be installed)
-- enter "**/*-Lint.xml" into the text input labelled "Checkstyle results"
 
-- in the "Post-build Actions" section, enable "Record Emma coverage report" (requires the Jenkins Emma plugin to be installed)
-- enter "**/*-Coverage.xml" into the text input labelled "Folders or files containing Emma XML reports"
-- in the "Post-build Actions" section, enable "Archive the artifacts"
-- enter the "Files to archive" as "**/*.image, **/*.changes, **/*.zip"
-- save the configuration changes.
 
 Run the build job
 -----------------

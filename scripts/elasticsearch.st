@@ -1,4 +1,5 @@
 Gofer new
-    repository: 'http://ss3.gemstone.com/ss/Elasticsearch';
+    squeaksource3: 'Elasticsearch';
     package: 'ConfigurationOfElasticsearch';
-    load
+    load.
+(Smalltalk at:#ConfigurationOfElasticsearch) load.
